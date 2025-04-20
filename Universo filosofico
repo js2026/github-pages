@@ -1,0 +1,254 @@
+<!DOCTYPE html><html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Universo Filosófico</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; font-family: Arial, sans-serif; color: #fff; }
+    #galaxy {
+      position: absolute;
+      top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle at center, #1a1a40, #000);
+      animation: rotateGalaxy 120s linear infinite;
+      transform-origin: center center;
+      z-index: -1;
+    }
+    @keyframes rotateGalaxy {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    .screen {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center; background: transparent;
+      transition: opacity 0.5s;
+    }
+    .hidden { display: none; }
+    button {
+      margin: 10px;
+      padding: 15px 30px;
+      font-size: 1em;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    #question {
+      font-size: 1.4em;
+      margin: 20px;
+      max-width: 80%;
+    }
+    #response {
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div id="galaxy"></div>
+
+  <div id="intro-screen" class="screen">
+    <h1>Bem-vindo ao Universo Filosófico</h1>
+    <button id="btn-intro">Avançar</button>
+  </div>
+
+  <div id="credit-screen" class="screen hidden">
+    <h2>Jogo criado por J.S.</h2>
+    <p>Todos os direitos reservados.</p>
+    <button id="btn-credit">Iniciar Jogo</button>
+  </div>
+
+  <div id="game-screen" class="screen hidden">
+    <div id="question"></div>
+    <div id="options"></div>
+    <div id="response"></div>
+  </div>
+
+  <script>
+    const phases = [
+      {
+        frase: "Você busca explorar o desconhecido ou refletir sobre o que já conhece?",
+        opcoes: ["Explorar", "Refletir"],
+        respostas: { Explorar: "Explorar é se libertar dos limites visíveis.", Refletir: "Refletir é acender a luz dentro do próprio labirinto." },
+        bg: "radial-gradient(circle, #1a0033, #000)"
+      },
+      {
+        frase: "O tempo te molda ou você molda o tempo?",
+        opcoes: ["Deixar Fluir", "Redefinir"],
+        respostas: { "Deixar Fluir": "Fluir é dançar com o invisível.", Redefinir: "Redefinir é dizer ao tempo quem você é." },
+        bg: "radial-gradient(circle, #003300, #000)"
+      },
+      {
+        frase: "A escuridão é ausência de luz ou presença de algo oculto?",
+        opcoes: ["Ausência", "Presença"],
+        respostas: { Ausência: "Ausência é o espaço esperando ser preenchido.", Presença: "Presença é o mistério que ainda não compreendemos." },
+        bg: "radial-gradient(circle, #220044, #000)"
+      },
+      {
+        frase: "Você se guia pela razão ou pela intuição?",
+        opcoes: ["Razão", "Intuição"],
+        respostas: { Razão: "A razão desenha mapas com linhas retas.", Intuição: "A intuição traça caminhos entre estrelas invisíveis." },
+        bg: "radial-gradient(circle, #004466, #000)"
+      },
+      {
+        frase: "Você é o que sente ou o que demonstra?",
+        opcoes: ["Sentir", "Demonstrar"],
+        respostas: { Sentir: "Sentir é tocar o mundo com a alma.", Demonstrar: "Demonstrar é permitir que o invisível ganhe forma." },
+        bg: "radial-gradient(circle, #440022, #000)"
+      },
+      {
+        frase: "O silêncio é vazio ou é o portal do sentido?",
+        opcoes: ["Vazio", "Portal"],
+        respostas: { Vazio: "O vazio prepara o espaço para o novo.", Portal: "No silêncio, as verdades sussurram." },
+        bg: "radial-gradient(circle, #001a33, #000)"
+      },
+      {
+        frase: "Você procura respostas ou melhores perguntas?",
+        opcoes: ["Respostas", "Perguntas"],
+        respostas: { Respostas: "Respostas são pontes, mas não destinos.", Perguntas: "Quem pergunta, acende estrelas no escuro." },
+        bg: "radial-gradient(circle, #33001a, #000)"
+      },
+      {
+        frase: "O universo te observa ou te convida?",
+        opcoes: ["Observa", "Convida"],
+        respostas: { Observa: "A observação é o reflexo do movimento interno.", Convida: "O convite é a dança entre a alma e o todo." },
+        bg: "radial-gradient(circle, #00331a, #000)"
+      },
+      {
+        frase: "Você teme o desconhecido ou dialoga com ele?",
+        opcoes: ["Temer", "Dialogar"],
+        respostas: { Temer: "O medo é o eco da ausência de entendimento.", Dialogar: "Conversar com o desconhecido é crescer além." },
+        bg: "radial-gradient(circle, #330033, #000)"
+      },
+      {
+        frase: "Você vive o agora ou se ancora no que já passou?",
+        opcoes: ["Agora", "Passado"],
+        respostas: { Agora: "O agora é a eternidade disfarçada.", Passado: "O passado é um espelho em constante transformação." },
+        bg: "radial-gradient(circle, #222200, #000)"
+      },
+      {
+        frase: "Você enxerga o todo ou os fragmentos?",
+        opcoes: ["Todo", "Fragmentos"],
+        respostas: { Todo: "O todo revela o sentido oculto dos detalhes.", Fragmentos: "Nos pedaços, há histórias ainda não contadas." },
+        bg: "radial-gradient(circle, #002222, #000)"
+      },
+      {
+        frase: "Você sente o universo dentro ou fora de você?",
+        opcoes: ["Dentro", "Fora"],
+        respostas: { Dentro: "Dentro pulsa o infinito esquecido.", Fora: "Fora é o reflexo da vastidão interna." },
+        bg: "radial-gradient(circle, #220000, #000)"
+      },
+      {
+        frase: "Você mergulha ou apenas toca a superfície?",
+        opcoes: ["Mergulhar", "Tocar"],
+        respostas: { Mergulhar: "Mergulhar é dissolver-se no todo.", Tocar: "Tocar é iniciar a dança com o mistério." },
+        bg: "radial-gradient(circle, #001133, #000)"
+      },
+      {
+        frase: "Você espera ou caminha?",
+        opcoes: ["Esperar", "Caminhar"],
+        respostas: { Esperar: "Esperar é dialogar com o tempo.", Caminhar: "Caminhar é escrever a história com os pés." },
+        bg: "radial-gradient(circle, #331a00, #000)"
+      },
+      {
+        frase: "Você se encontra ou se perde ao buscar?",
+        opcoes: ["Encontrar", "Perder"],
+        respostas: { Encontrar: "Quem encontra, reconhece o que já era.", Perder: "Perder-se é reencontrar-se em nova forma." },
+        bg: "radial-gradient(circle, #220033, #000)"
+      },
+      {
+        frase: "Você ouve o mundo ou seu próprio ser?",
+        opcoes: ["O mundo", "A si mesmo"],
+        respostas: { "O mundo": "Ouvir o mundo é decifrar ecos antigos.", "A si mesmo": "A voz interior conhece caminhos ocultos." },
+        bg: "radial-gradient(circle, #003322, #000)"
+      },
+      {
+        frase: "Você é parte do universo ou o universo em parte?",
+        opcoes: ["Parte", "Totalidade"],
+        respostas: { Parte: "Parte é a centelha do todo.", Totalidade: "O universo cabe dentro de um único ser desperto." },
+        bg: "radial-gradient(circle, #330000, #000)"
+      },
+      {
+        frase: "Você se transforma ou revela o que sempre foi?",
+        opcoes: ["Transformar", "Revelar"],
+        respostas: { Transformar: "A transformação é a dança do tempo em nós.", Revelar: "Revelar é retirar os véus da essência." },
+        bg: "radial-gradient(circle, #001a1a, #000)"
+      },
+      {
+        frase: "Você cria ou apenas observa a criação?",
+        opcoes: ["Criar", "Observar"],
+        respostas: { Criar: "Criar é manifestar o invisível.", Observar: "Observar é aprender o idioma da existência." },
+        bg: "radial-gradient(circle, #332200, #000)"
+      },
+      {
+        frase: "Você tem limites ou infinitas possibilidades?",
+        opcoes: ["Limites", "Possibilidades"],
+        respostas: { Limites: "Os limites são janelas não abertas.", Possibilidades: "As possibilidades são sementes do agora." },
+        bg: "radial-gradient(circle, #220011, #000)"
+      }
+    ];
+
+    let currentPhase = 0;
+    const introScreen = document.getElementById('intro-screen');
+    const creditScreen = document.getElementById('credit-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const responseEl = document.getElementById('response');
+    const galaxyBg = document.getElementById('galaxy');
+
+    document.getElementById('btn-intro').onclick = () => showScreen('credit-screen');
+    document.getElementById('btn-credit').onclick = () => {
+      showScreen('game-screen');
+      loadPhase();
+    };
+
+    function showScreen(id) {
+      ['intro-screen', 'credit-screen', 'game-screen'].forEach(s => {
+        document.getElementById(s).classList.add('hidden');
+      });
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function loadPhase() {
+      const phase = phases[currentPhase];
+      questionEl.textContent = phase.frase;
+      optionsEl.innerHTML = '';
+      responseEl.textContent = '';
+      galaxyBg.style.background = phase.bg;
+
+      phase.opcoes.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.textContent = choice;
+        btn.onclick = () => handleChoice(choice);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function handleChoice(choice) {
+      const phase = phases[currentPhase];
+      const resp = phase.respostas[choice];
+      responseEl.textContent = resp || '...';
+
+      currentPhase++;
+      if (currentPhase < phases.length) {
+        setTimeout(loadPhase, 2000);
+      } else {
+        setTimeout(() => {
+          questionEl.textContent = "Você chegou longe... mas o universo continua infinito.";
+          optionsEl.innerHTML = '';
+          responseEl.textContent = '';
+        }, 2000);
+      }
+    }
+  </script>
+</body>
+</html>
